@@ -1,6 +1,7 @@
 package com.capgemini.employeepayrolljdbc;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,20 +43,12 @@ public class EmployeePayrollService {
 		double salary = Double.parseDouble(consoleInputReader.nextLine());
 		employeePayrollList.add(new EmployeePayrollData(id, name, salary));
 	}
-
-	/**
-	 * Write payroll data to console
-	 */
 	public void writeEmployeeData(IOService ioService) {
 		if (ioService.equals(IOService.CONSOLE_IO))
 			System.out.println("Writing Employee Payroll Data to Console\n" + employeePayrollList);
 		else if (ioService.equals(IOService.FILE_IO))
 			new EmployeePayrollFileIOService().writeData(employeePayrollList);
 	}
-
-	/**
-	 * @param ioService Print Data
-	 */
 	public void printData(IOService ioService) {
 		new EmployeePayrollFileIOService().printData();
 	}
@@ -97,15 +90,17 @@ public class EmployeePayrollService {
 		return checkList.get(0).equals(getEmployeePayrollData(name));
 		
 	}
-
 	public List<EmployeePayrollData> getEmployeesInDateRange(String date1, String date2) {
 		List<EmployeePayrollData> employeesInGivenDateRangeList = employeePayrollDBService.getEmployeesInGivenDateRangeDB(date1,date2);
 		return employeesInGivenDateRangeList;
 	}
-
 	public Map<String, Double> readAverageSalaryByGender(IOService ioService) {
 		if(ioService.equals(IOService.DB_IO)) 
 			return employeePayrollDBService.getAverageSalaryByGender();
 		return null;
-}
+	}
+
+	public void addEmployeeToPayroll(String name, double salary, LocalDate startDate, String gender) {
+		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name,salary,startDate,gender));
+	}
 }
