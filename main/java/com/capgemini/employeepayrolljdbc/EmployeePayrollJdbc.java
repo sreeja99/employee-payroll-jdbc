@@ -16,7 +16,7 @@ public class EmployeePayrollJdbc {
 		}
 		ListDrivers();
 		try {
-			Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/payroll_service", "root", "Sreeja6shreya$");
+			Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/payroll_service_jdbc", "root", "Sreeja6shreya$");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
