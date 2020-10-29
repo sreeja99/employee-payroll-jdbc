@@ -34,6 +34,10 @@ public class EmployeePayrollService {
 		employeePayrollService.readEmployeeData(consoleInputReader);
 		employeePayrollService.writeEmployeeData(IOService.CONSOLE_IO);
 	}
+
+	/**
+	 * @param consoleInputReader Read employee data
+	 */
 	public void readEmployeeData(Scanner consoleInputReader) {
 		System.out.println("Enter employee ID : ");
 		int id = Integer.parseInt(consoleInputReader.nextLine());
@@ -43,20 +47,38 @@ public class EmployeePayrollService {
 		double salary = Double.parseDouble(consoleInputReader.nextLine());
 		employeePayrollList.add(new EmployeePayrollData(id, name, salary));
 	}
+
+	/**
+	 * Write payroll data to console
+	 */
 	public void writeEmployeeData(IOService ioService) {
 		if (ioService.equals(IOService.CONSOLE_IO))
 			System.out.println("Writing Employee Payroll Data to Console\n" + employeePayrollList);
 		else if (ioService.equals(IOService.FILE_IO))
 			new EmployeePayrollFileIOService().writeData(employeePayrollList);
 	}
+
+	/**
+	 * @param ioService Print Data
+	 */
 	public void printData(IOService ioService) {
 		new EmployeePayrollFileIOService().printData();
 	}
+
+	/**
+	 * @param ioService
+	 * @return number of entries
+	 */
 	public long countEntries(IOService ioService) {
 		if (ioService.equals(IOService.FILE_IO))
 			return new EmployeePayrollFileIOService().countEntries();
 		return 0;
 	}
+	
+	/**
+	 * @param ioService
+	 * @return Employee Payroll Data List
+	 */
 	public List<EmployeePayrollData> readData(IOService ioService) {
 		if(ioService.equals(IOService.FILE_IO))
 			 return new EmployeePayrollFileIOService().readData();
@@ -67,6 +89,12 @@ public class EmployeePayrollService {
 		else
 			return null;
 	}
+
+	/**
+	 * @param name
+	 * @param salary
+	 * @throws EmployeePayrollException 
+	 */
 	public void updateEmployeeSalary(String name, double salary,StatementType type) throws EmployeePayrollException {
 		int result = employeePayrollDBService.updateEmployeeData(name,salary,type);
 		EmployeePayrollData employeePayrollData = null;
@@ -78,6 +106,11 @@ public class EmployeePayrollService {
 			employeePayrollData.salary = salary;
 		}
 	}
+
+	/**
+	 * @param name
+	 * @return Employee corresponding to name
+	 */
 	private EmployeePayrollData getEmployeePayrollData(String name) {
 		EmployeePayrollData employeePayrollData = this.employeePayrollList.stream()
 				.filter(employee->employee.name.equals(name))
@@ -85,15 +118,31 @@ public class EmployeePayrollService {
 				.orElse(null);
 		return employeePayrollData;
 	}
+
+	/**
+	 * @param name
+	 * @return true if data is in sync
+	 */
 	public boolean checkEmployeePayrollInSyncWithDB(String name) {
 		List<EmployeePayrollData> checkList = employeePayrollDBService.getEmployeePayrollData(name);
 		return checkList.get(0).equals(getEmployeePayrollData(name));
 		
 	}
+
+	/**
+	 * @param date1
+	 * @param date2
+	 * @return employee list in given date range
+	 */
 	public List<EmployeePayrollData> getEmployeesInDateRange(String date1, String date2) {
 		List<EmployeePayrollData> employeesInGivenDateRangeList = employeePayrollDBService.getEmployeesInGivenDateRangeDB(date1,date2);
 		return employeesInGivenDateRangeList;
 	}
+
+	/**
+	 * @param ioService
+	 * @return Employee name and avg salary map
+	 */
 	public Map<String, Double> readAverageSalaryByGender(IOService ioService) {
 		if(ioService.equals(IOService.DB_IO)) 
 			return employeePayrollDBService.getAverageSalaryByGender();

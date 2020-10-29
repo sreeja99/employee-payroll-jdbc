@@ -30,10 +30,18 @@ public class EmployeePayrollDBService {
 			employeePayrollDBService = new EmployeePayrollDBService();
 		return employeePayrollDBService;
 	}
+
+	/**
+	 * @return employee data list which is read from database
+	 */
 	public List<EmployeePayrollData> readData() {
 		String sql = "SELECT * FROM employee_payroll_2;";
 		return this.getEmployeePayrollDataUsingSQLQuery(sql);
 	}
+
+	/**
+	 * Prepared statement for retrieving employee data
+	 */
 	private void preparedStatementForEmployeeData() {
 		try {
 			Connection connection = this.getConnection();
@@ -43,6 +51,11 @@ public class EmployeePayrollDBService {
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * @param name
+	 * @return employee payroll list using prepared statement
+	 */
 	public List<EmployeePayrollData> getEmployeePayrollData(String name) {
 		List<EmployeePayrollData> employeePayrollList = null;
 		if (this.employeePayrollDataStatement == null)
@@ -57,6 +70,11 @@ public class EmployeePayrollDBService {
 		return employeePayrollList;
 		
 	}
+	
+	/**
+	 * @param sql query
+	 * @return employee payroll list
+	 */
 	public List<EmployeePayrollData> getEmployeePayrollDataUsingSQLQuery(String sql){
 		List<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
 		try(Connection connection = this.getConnection()) {
@@ -119,6 +137,12 @@ public class EmployeePayrollDBService {
 		}
 		return 0;
 	}
+
+	/**
+	 * @param date1
+	 * @param date2
+	 * @return employee list in given date range
+	 */
 	public List<EmployeePayrollData> getEmployeesInGivenDateRangeDB(String date1, String date2) {
 		String sql = String.format("SELECT * FROM employee_payroll_2 where start between '%s' AND '%s';", date1, date2);
 		return this.getEmployeePayrollDataUsingSQLQuery(sql);
@@ -141,7 +165,8 @@ public class EmployeePayrollDBService {
 		}
 		return genderToAvgSalaryMap;
 	}
-	public EmployeePayrollData addEmployeeToPayroll(String name, double salary, LocalDate startDate, String gender) {
+	
+	public EmployeePayrollData addEmployeeToPayrollUC7(String name, double salary, LocalDate startDate, String gender) {
 		int employeeId = -1;
 		EmployeePayrollData employeePayrollData = null;
 		String sql = String.format("INSERT INTO employee_payroll_2 (name,gender,salary,start) VALUES ('%s','%s','%s','%s')", name,
@@ -159,8 +184,47 @@ public class EmployeePayrollDBService {
 		}
 		return employeePayrollData;
 	}
+	
+	public EmployeePayrollData addEmployeeToPayroll(String name, double salary, LocalDate startDate, String gender) {
+		int employeeId = -1;
+		Connection connection = null;
+		EmployeePayrollData employeePayrollData = null;
+		try {
+			connection = this.getConnection();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		try(Statement statement = connection.createStatement()){
+			String sql = String.format("INSERT INTO employee_payroll_2 (name,gender,salary,start) VALUES ('%s','%s','%s','%s')", name,
+					gender, salary, Date.valueOf(startDate));
+			int rowAffected = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+			if(rowAffected==1) {
+				ResultSet resultSet = statement.getGeneratedKeys();
+				if(resultSet.next()) employeeId =  resultSet.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try(Statement statement = connection.createStatement()){
+			double deductions = salary*0.2;
+			double taxablePay = salary-deductions;
+			double tax = taxablePay*0.1;
+			double netPay = salary - tax;
+			String sql =  String.format("INSERT INTO payroll (employee_id,basic_pay,deductions,taxable_pay,tax,net_pay) VALUES"
+					+ "( %s, %s, %s ,%s, %s, %s)",employeeId,salary,deductions,taxablePay,tax,netPay);
+			int rowAffected = statement.executeUpdate(sql);
+			if(rowAffected == 1) {
+				employeePayrollData = new EmployeePayrollData(employeeId,name,salary,startDate);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return employeePayrollData;
+	}
+
 	private Connection getConnection() throws SQLException {
-		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service_jdbc?useSSL=false";
+		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?useSSL=false";
 		String userName = "root";
 		String password = "root";
 		Connection connection;
@@ -169,5 +233,4 @@ public class EmployeePayrollDBService {
 		System.out.println("Connection successful: " + connection);
 		return connection;
 	}
-
 }
