@@ -35,7 +35,7 @@ public class EmployeePayrollDBService {
 	 * @return employee data list which is read from database
 	 */
 	public List<EmployeePayrollData> readData() {
-		String sql = "SELECT * FROM employee_payroll_2;";
+		String sql = "SELECT * FROM employee_payroll;";
 		return this.getEmployeePayrollDataUsingSQLQuery(sql);
 	}
 
@@ -45,7 +45,7 @@ public class EmployeePayrollDBService {
 	private void preparedStatementForEmployeeData() {
 		try {
 			Connection connection = this.getConnection();
-			String sql = "Select * from employee_payroll_2 WHERE name = ?";
+			String sql = "Select * from employee_payroll WHERE name = ?";
 			employeePayrollDataStatement = connection.prepareStatement(sql);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -218,7 +218,7 @@ public class EmployeePayrollDBService {
 			double taxablePay = salary-deductions;
 			double tax = taxablePay*0.1;
 			double netPay = salary - tax;
-			String sql =  String.format("INSERT INTO payroll (employee_id,basic_pay,deductions,taxable_pay,tax,net_pay) VALUES"
+			String sql =  String.format("INSERT INTO payroll(employee_id,basic_pay,deductions,taxable_pay,tax,net_pay) VALUES"
 					+ "( %s, %s, %s ,%s, %s, %s)",employeeId,salary,deductions,taxablePay,tax,netPay);
 			int rowAffected = statement.executeUpdate(sql);
 			if(rowAffected == 1) {
