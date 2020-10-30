@@ -169,7 +169,7 @@ public class EmployeePayrollDBService {
 	public EmployeePayrollData addEmployeeToPayrollUC7(String name, double salary, LocalDate startDate, String gender) {
 		int employeeId = -1;
 		EmployeePayrollData employeePayrollData = null;
-		String sql = String.format("INSERT INTO employee_payroll(name,gender,salary,start) VALUES ('%s','%s','%s','%s')", name,
+		String sql = String.format("INSERT INTO employee_payroll (name,gender,salary,start) VALUES ('%s','%s','%s','%s')", name,
 				gender, salary, Date.valueOf(startDate));
 		try(Connection connection = this.getConnection()){
 			Statement statement = connection.createStatement();
@@ -191,11 +191,12 @@ public class EmployeePayrollDBService {
 		EmployeePayrollData employeePayrollData = null;
 		try {
 			connection = this.getConnection();
+			connection.setAutoCommit(false);
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
 		try(Statement statement = connection.createStatement()){
-			String sql = String.format("INSERT INTO employee_payroll(name,gender,salary,start) VALUES ('%s','%s','%s','%s')", name,
+			String sql = String.format("INSERT INTO employee_payroll (name,gender,salary,start) VALUES ('%s','%s','%s','%s')", name,
 					gender, salary, Date.valueOf(startDate));
 			int rowAffected = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 			if(rowAffected==1) {
@@ -203,6 +204,12 @@ public class EmployeePayrollDBService {
 				if(resultSet.next()) employeeId =  resultSet.getInt(1);
 			}
 		} catch (SQLException e) {
+			try {
+				connection.rollback();
+				return employeePayrollData;
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
 		}
 		
@@ -219,6 +226,23 @@ public class EmployeePayrollDBService {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		} 
+		try {
+			connection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			if(connection!=null)
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 		}
 		return employeePayrollData;
 	}
