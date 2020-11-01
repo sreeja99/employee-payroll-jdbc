@@ -1,6 +1,7 @@
 package com.capgemini.employeepayrolljdbc;
 
 public class EmployeePayrollException extends Exception {
+	private static final long serialVersionUID = 1L;
 	public enum ExceptionType{
 		UPDATE_FAIL
 	}
@@ -10,3 +11,4 @@ public class EmployeePayrollException extends Exception {
 		this.type = type;
 	}
 }
+

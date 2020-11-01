@@ -8,104 +8,82 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Test;
 
-import com.capgemini.employeepayrolljdbc.EmployeePayrollDBService.StatementType;
 import com.capgemini.employeepayrolljdbc.EmployeePayrollService.IOService;
-import com.capgemini.employeepayrolljdbc.EmployeePayrollService.NormalisationType;
-
 import junit.framework.Assert;
 public class EmployeePayrollServiceTest {
-	
 
 	@Test
-	public void given3Employees_WhenWrittenToFile_ShouldMatchEmployeeEntries() {
-		EmployeePayrollData[] arrayOfEmp = {
-				new EmployeePayrollData(1,"Jeff Bezos",100000.0),
-				new EmployeePayrollData(2, "Bill Gates",200000.0),
-				new EmployeePayrollData(3, "Mark Zuckerberg",300000.0)
-		};
-		EmployeePayrollService employeePayrollService;
-		employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmp));
-		employeePayrollService.writeEmployeeData(IOService.FILE_IO);
+	public void given3Employees_Should_Match_Entries() {
+		EmployeePayrollData[] arrayOfEmployee = { new EmployeePayrollData(1, "Bill", 100000.0),
+				new EmployeePayrollData(2, "Terisa", 200000.0), new EmployeePayrollData(3, "Charlie", 300000.0) };
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmployee));
+	}
+
+	@Test
+	public void writePayrollOnFile() {
+		EmployeePayrollData[] arrayOfEmployee = { new EmployeePayrollData(1, "bill", 100000.0),
+				new EmployeePayrollData(2, "Sreeja", 200000.0), new EmployeePayrollData(3, "Terisa", 300000.0) };
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		;
+		employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmployee));
+		employeePayrollService.writeEmployeePayrollData(IOService.FILE_IO);
+	}
+
+	@Test
+	public void whenAdded_ShouldReturn_TheCount() {
+		EmployeePayrollData[] arrayOfEmployee = { new EmployeePayrollData(1, "Bill", 100000.0),
+				new EmployeePayrollData(2, "Terisa", 200000.0), new EmployeePayrollData(3, "Charlie", 300000.0) };
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		;
+		employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmployee));
 		long entries = employeePayrollService.countEntries(IOService.FILE_IO);
-		employeePayrollService.printData(IOService.FILE_IO);
-		List<EmployeePayrollData> employeeList = employeePayrollService.readData(IOService.FILE_IO,NormalisationType.DENORMALISED);
-		System.out.println(employeeList);
-		assertEquals(3, entries);
+		Assert.assertEquals(3, entries);
 	}
-	
+
 	@Test
-	public void givenEmployeePayrollInDB_WhenRetrieved_ShouldMatchEmployeeCount() {
+	public void fileOnReading_ShouldMAtch_EmployeeCount() {
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		List<EmployeePayrollData> employeePayrollData = employeePayrollService.readData(IOService.DB_IO,NormalisationType.DENORMALISED);
-		assertEquals(4, employeePayrollData.size());
+		List<EmployeePayrollData> entries = employeePayrollService.readPayrollData(IOService.FILE_IO);
 	}
-	
+
 	@Test
-	public void givenNewSalaryForEmployee_WhenUpdated_ShouldSyncWithDatabase() throws EmployeePayrollException {
+	public void givenEmployeePayrollData_ShouldMatchAverageSalary_GroupByGender() {
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		List<EmployeePayrollData> employeePayrollData = employeePayrollService.readData(IOService.DB_IO,NormalisationType.DENORMALISED);
-		employeePayrollService.updateEmployeeSalary("Terisa",3000000.00,StatementType.STATEMENT,NormalisationType.DENORMALISED);
-		boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Terisa",NormalisationType.DENORMALISED);
-		assertTrue(result);
+		employeePayrollService.readPayrollData(IOService.DB_IO);
+		Map<String, Double> employeePayrollData = employeePayrollService.readPayrollDataForAvgSalary(IOService.DB_IO);
+		Assert.assertEquals(2, employeePayrollData.size());
 	}
-	
-	@Test
-	public void givenNewSalaryForEmployee_WhenUpdatedUsingPreparedStatement_ShouldSyncWithDatabase() throws EmployeePayrollException {
-		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		List<EmployeePayrollData> employeePayrollData = employeePayrollService.readData(IOService.DB_IO,NormalisationType.DENORMALISED);
-		employeePayrollService.updateEmployeeSalary("Terisa",3000000.00,StatementType.PREPARED_STATEMENT,NormalisationType.DENORMALISED);
-		boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Terisa",NormalisationType.DENORMALISED);
-		assertTrue(result);
-	}
-	
-	@Test
-	public void givenDateRangeForEmployee_WhenRetrievedUsingStatement_ShouldReturnProperData() throws EmployeePayrollException {
-		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		List<EmployeePayrollData> employeePayrollData = employeePayrollService.readData(IOService.DB_IO,NormalisationType.DENORMALISED);
-		List<EmployeePayrollData> employeeDataInGivenDateRange = employeePayrollService.getEmployeesInDateRange("2018-01-01","2019-11-15");
-		assertEquals(2, employeeDataInGivenDateRange.size());
-	}
-	
-	//UC6
-	@Test
-	public void givenPayrollData_WhenAverageSalaryRetrievedByGender_ShouldReturnProperValue() {
-		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		employeePayrollService.readData(IOService.DB_IO,NormalisationType.DENORMALISED);
-		Map<String,Double> averageSalaryByGender  = employeePayrollService.readAverageSalaryByGender(IOService.DB_IO);
-		System.out.println(averageSalaryByGender);
-		assertTrue(averageSalaryByGender.get("M").equals(18000000.00)&&
-				averageSalaryByGender.get("F").equals(3000000.00));
-	}
-	
-	@Test
-	public void givenNewEmployee_WhenAdded_ShouldSyncWithDB() {
-		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		employeePayrollService.readData(IOService.DB_IO,NormalisationType.DENORMALISED);
-		employeePayrollService.addEmployeeToPayroll("Mark",50000000.00,LocalDate.now(),"M");
-		boolean result =  employeePayrollService.checkEmployeePayrollInSyncWithDB("Mark",NormalisationType.DENORMALISED);
-		assertTrue(result);
-	}
-	
-	//TESTS FOR NORMALISED TABLES
+
 	@Test
 	public void givenEmployeePayrollInNormalisedDB_WhenRetrieved_ShouldMatchEmployeeCount() {
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		List<EmployeePayrollData> employeePayrollData = employeePayrollService.readData(IOService.DB_IO,NormalisationType.NORMALISED);
-		System.out.println(employeePayrollData);
-		for(EmployeePayrollData emp : employeePayrollData ) {
-			emp.printDepartments();
-		}
-		assertEquals(3, employeePayrollData.size());
+		List<EmployeePayrollData> employeePayrollData = employeePayrollService.readPayrollData(IOService.DB_IO);
+		Assert.assertEquals(5, employeePayrollData.size());
 	}
-	
+
 	@Test
-	public void givenNewSalaryForEmployeeInNormalisedDB_WhenUpdated_ShouldSyncWithDatabase() throws EmployeePayrollException {
+	public void givenNewSalaryForEmployeeInNormalisedDB_WhenUpdated_ShouldSyncWithDatabase()
+			throws EmployeePayrollException {
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		List<EmployeePayrollData> employeePayrollData = employeePayrollService.readData(IOService.DB_IO,NormalisationType.NORMALISED);
-		employeePayrollService.updateEmployeeSalary("Terisa",3000000.00,StatementType.STATEMENT,NormalisationType.NORMALISED);
-		boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Terisa",NormalisationType.NORMALISED);
-		assertTrue(result);
+		List<EmployeePayrollData> employeePayrollData = employeePayrollService.readPayrollData(IOService.DB_IO);
+		employeePayrollService.updateEmployeeSalary("Terisa", 3000000.00);
+		boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Terisa");
+		Assert.assertTrue(result);
 	}
+
+	@Test
+	public void givenDateRangeForEmployeeInNormalised_WhenRetrieved_ShouldMatchEmployeeCount() {
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		employeePayrollService.readPayrollData(IOService.DB_IO);
+		LocalDate startDate = LocalDate.of(2018, 01, 01);
+		LocalDate endDate = LocalDate.now();
+		List<EmployeePayrollData> employeePayrollData = employeePayrollService.readPayrollDataForRange(IOService.DB_IO,
+				startDate, endDate);
+		Assert.assertEquals(5, employeePayrollData.size());
+	}
+
 }
