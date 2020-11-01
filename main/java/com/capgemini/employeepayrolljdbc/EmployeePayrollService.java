@@ -123,4 +123,11 @@ public class EmployeePayrollService {
 		employeePayrollService.readEmployeePayrollData(consoleInputReader);
 		employeePayrollService.writeEmployeePayrollData(IOService.CONSOLE_IO);
 	}
+
+	public void addEmployeeToPayrollNormalised(String name, String gender, int company_id, String company_name, double salary,
+			LocalDate startDate) {
+		employeePayrollList.add(employeePayrollDBServiceNormalised.addEmployeeToPayroll(name, gender, company_id,
+				company_name, salary, startDate));
+		
+	}
 }
