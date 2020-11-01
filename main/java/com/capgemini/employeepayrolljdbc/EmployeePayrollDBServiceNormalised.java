@@ -29,9 +29,10 @@ public class EmployeePayrollDBServiceNormalised {
 	}
 
 	public List<EmployeePayrollData> readData() {
-		String sql = "SELECT e.id,e.company_Id,e.name,e.gender,e.start,e.company_Name,d.Department_Name,p.basic_pay "
-				+ "FROM employee_payroll2 e JOIN employee_department2 d2 " + "ON e.id = d2.ID " + "JOIN department2 d "
-				+ "ON d2.Department_ID  = d.Department_ID  " + "JOIN payroll_details p " + "ON e.id = p.employee_id;";
+		String sql = "SELECT e.id,e.company_id,e.employee_name,e.gender,e.start,c.company_name,d.dept_name,p.basic_pay "
+				+ "FROM employee e JOIN company c" + " ON e.company_id = c.company_id " + "JOIN employee_department d2 "
+				+ "ON e.id = d2.emp_id " + "JOIN department d " + "ON d2.dept_id = d.dept_id " + "JOIN payroll p "
+				+ "ON e.id = p.emp_id;";
 		return this.getEmployeePayrollDataUsingSQLQuery(sql);
 	}
 
@@ -88,10 +89,10 @@ public class EmployeePayrollDBServiceNormalised {
 	private void preparedStatementForEmployeeData() {
 		try {
 			Connection connection = this.getConnection();
-			String sql = "SELECT e.id,e.company_id,e.name,e.gender,e.start,e.company_Name,d.Department_Name,p.basic_pay "
-					+ "FROM employee_payroll2 e JOIN employee_department2 d2 " + "ON e.id = d2.ID "
-					+ "JOIN department2 d " + "ON d2.Department_ID = d.Department_ID " + "JOIN payroll_details p "
-					+ "ON e.id = p.employee_id WHERE e.name = ?";
+			String sql = "SELECT e.id,e.company_id,e.employee_name,e.gender,e.start,c.company_name,d.dept_name,p.basic_pay "
+					+ "FROM employee e JOIN company c" + " ON e.company_id = c.company_id " + "JOIN employee_department d2 "
+					+ "ON e.id = d2.emp_id " + "JOIN department d " + "ON d2.dept_id = d.dept_id " + "JOIN payroll p "
+					+ "ON e.id = p.emp_id WHERE e.employee_name = ?";
 
 			employeePayrollDataStatementNormalised = connection.prepareStatement(sql);
 		} catch (SQLException e) {
@@ -104,8 +105,8 @@ public class EmployeePayrollDBServiceNormalised {
 	}
 
 	private int updateEmployeeDataUsingPreparedStatement(String name, double salary) {
-		String sql = String.format("UPDATE payroll_details SET basic_pay = %.2f WHERE employee_id = "
-				+ "(SELECT id from employee_payroll2 WHERE name = '%s');", salary, name);
+		String sql = String.format("UPDATE payroll SET basic_pay = %.2f WHERE employee_id = "
+				+ "(SELECT id from employee_payroll WHERE name = '%s');", salary, name);
 		try (Connection connection = this.getConnection();) {
 			PreparedStatement prepareStatement = connection.prepareStatement(sql);
 			return prepareStatement.executeUpdate(sql);
@@ -117,7 +118,7 @@ public class EmployeePayrollDBServiceNormalised {
 
 	public List<EmployeePayrollData> getEmployeeForDateRange(LocalDate startDate, LocalDate endDate) {
 		String sql = String.format(
-				"SELECT * FROM employee_payroll2 WHERE start BETWEEN CAST('2018-01-01' AS DATE) AND DATE(NOW());",
+				"SELECT * FROM employee_payroll WHERE start BETWEEN CAST('2018-01-01' AS DATE) AND DATE(NOW());",
 				startDate,endDate);
 		return this.getEmployeePayrollDataUsingDB(sql);
 	}
@@ -156,7 +157,7 @@ public class EmployeePayrollDBServiceNormalised {
 	}
 
 	public Map<String, Double> getAverageSalaryByGender() {
-		String sql = "SELECT gender,AVG(salary) as avg_salary FROM employee_payroll2 GROUP BY gender;";
+		String sql = "SELECT gender,AVG(salary) as avg_salary FROM employee_payroll GROUP BY gender;";
 		Map<String, Double> genderToAverageSalaryMap = new HashMap<>();
 		try (Connection connection = this.getConnection();) {
 			PreparedStatement prepareStatement = connection.prepareStatement(sql);
@@ -175,7 +176,7 @@ public class EmployeePayrollDBServiceNormalised {
 	private Connection getConnection() throws SQLException {
 		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?useSSL=false";
 		String userName = "root";
-		String password = "satyasai1";
+		String password = "Sreeja6shrey$";
 		Connection connection;
 		System.out.println("Connecting to database: " + jdbcURL);
 		connection = DriverManager.getConnection(jdbcURL, userName, password);
