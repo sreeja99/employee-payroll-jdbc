@@ -130,4 +130,7 @@ public class EmployeePayrollService {
 				company_name, salary, startDate));
 		
 	}
+	public static void removeEmployee(int empId) throws SQLException,EmployeePayrollException {
+		EmployeePayrollDBService.removeEmployeeFromDB(empId);
+	}
 }

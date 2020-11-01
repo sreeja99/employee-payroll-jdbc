@@ -160,7 +160,7 @@ public class EmployeePayrollDBService {
 		return employeePayrollData;
 	}
 
-	private Connection getConnection() throws SQLException {
+	private static Connection getConnection() throws SQLException {
 		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?useSSL=false";
 		String userName = "root";
 		String password = "Sreeja6shreya$";
@@ -236,6 +236,17 @@ public class EmployeePayrollDBService {
 			}
 		}
 		return employeePayrollData;
+	}
+
+	public static void removeEmployeeFromDB(int empId) {
+		String sql=String.format("UPDATE employee_payroll SET active = false WHERE id= '%s'",empId);
+		try(Connection connection=getConnection()){
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.executeUpdate();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 }
