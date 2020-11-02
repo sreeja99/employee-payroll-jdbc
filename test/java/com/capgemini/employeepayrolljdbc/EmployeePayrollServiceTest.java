@@ -2,7 +2,10 @@ package com.capgemini.employeepayrolljdbc;
 
 import static org.junit.Assert.*;
 
+import java.sql.Date;
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -101,6 +104,21 @@ public class EmployeePayrollServiceTest {
 		List<EmployeePayrollData> employeePayrollData = employeePayrollService.readPayrollData(IOService.DB_IO);
 		assertEquals(5,employeePayrollData.size());
 		
+	}
+	@Test
+	public void given4Employees_WhenAdded_ShouldMatchEmpEntries() throws EmployeePayrollException {
+		EmployeePayrollData[] employeePayrollDataArray = {
+				new EmployeePayrollData(0, "Kalyan", 1000000,LocalDate.now() ,"M",509),
+				new EmployeePayrollData(0, "Rashmi", 1000000, LocalDate.now(), "F",509),
+				new EmployeePayrollData(0, "Sharad", 2000000, LocalDate.now(), "M",509),
+				new EmployeePayrollData(0, "Nancy", 1500000, LocalDate.now(), "F",509 )};
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		employeePayrollService.readPayrollData(IOService.DB_IO);
+		Instant start = Instant.now();
+		EmployeePayrollService.addEmployeeAndPayrollData(employeePayrollDataArray);
+		Instant end = Instant.now();
+		System.out.println("Duration without Thread: " + Duration.between(start, end).toMillis() + " ms");
+		assertEquals(9, employeePayrollService.readPayrollData(IOService.DB_IO).size());
 	}
 
 }

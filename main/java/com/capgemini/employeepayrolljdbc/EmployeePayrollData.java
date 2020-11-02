@@ -1,5 +1,6 @@
 package com.capgemini.employeepayrolljdbc;
 
+import java.sql.Date;
 import java.time.LocalDate;
 
 public class EmployeePayrollData {
@@ -9,7 +10,7 @@ public class EmployeePayrollData {
 	public LocalDate startDate;
 	public String gender;
 	public String companyName;
-	public int companyId;
+	public static int companyId;
 	public String department[];
 	public int departmentId;
 	public String departmentName;
@@ -67,6 +68,17 @@ public class EmployeePayrollData {
 		this.companyId = companyId;
 		this.department = department;
 	}
+	public EmployeePayrollData(int id, String name, double salary, LocalDate startDate, String gender, int companyId) {
+		this.id = id;
+		this.name = name;
+		this.gender = gender;
+		this.companyId = companyId;
+
+		this.salary = salary;
+		this.startDate = startDate;
+	}
+
+	
 
 	public String[] getDepartment() {
 		return department;
@@ -75,7 +87,20 @@ public class EmployeePayrollData {
 	public void setDepartment(String[] department) {
 		this.department = department;
 	}
+	public String getName() {
+		return name;
+	}
+	public double getSalary() {
+		return salary;
+	}
 
+	public LocalDate getStartDate() {
+		return startDate;
+	}
+
+	public String getGender() {
+		return gender;
+	}
 	public int getId() {
 		return id;
 	}

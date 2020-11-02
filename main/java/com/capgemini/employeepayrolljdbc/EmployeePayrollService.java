@@ -19,9 +19,9 @@ public class EmployeePayrollService {
 		CONSOLE_IO, FILE_IO, DB_IO, REST_IO
 	}
 
-	private List<EmployeePayrollData> employeePayrollList;
+	private static List<EmployeePayrollData> employeePayrollList;
 	private Map<String, Double> employeePayrollMap;
-	private EmployeePayrollDBService employeePayrollDBService;
+	private static EmployeePayrollDBService employeePayrollDBService;
 	private EmployeePayrollDBServiceNormalised employeePayrollDBServiceNormalised;
 
 	public EmployeePayrollService() {
@@ -69,7 +69,7 @@ public class EmployeePayrollService {
 		return 0;
 	}
 
-	public List<EmployeePayrollData> readPayrollData(IOService ioService) {
+	public  List<EmployeePayrollData> readPayrollData(IOService ioService) {
 		if (ioService.equals(IOService.FILE_IO))
 			this.employeePayrollList = new EmployeePayrollFileIOService().readData();
 		else if (ioService.equals(IOService.DB_IO))
@@ -112,7 +112,7 @@ public class EmployeePayrollService {
 		return employeePayrollMap;
 	}
 
-	public void addEmployeeToPayroll(String name, double salary, LocalDate startDate, String gender) {
+	public static void addEmployeeToPayroll(String name, double salary, LocalDate startDate, String gender) {
 		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayrollUC8(name, salary, startDate, gender));
 	}
 
@@ -132,5 +132,14 @@ public class EmployeePayrollService {
 	}
 	public static void removeEmployee(int empId) throws SQLException,EmployeePayrollException {
 		EmployeePayrollDBService.removeEmployeeFromDB(empId);
+	}
+
+	public static void addEmployeeAndPayrollData(EmployeePayrollData[] employeePayrollDataArray)
+			throws EmployeePayrollException {
+		for (EmployeePayrollData emp : employeePayrollDataArray) {
+			System.out.println(emp.getName() + " is being added to DB");
+			addEmployeeToPayroll(emp.getName(), emp.getSalary(), emp.getStartDate(), emp.getGender());
+			System.out.println("Employee added: " + emp.getName());
+		}
 	}
 }
