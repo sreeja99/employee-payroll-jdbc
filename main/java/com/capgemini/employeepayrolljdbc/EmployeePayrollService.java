@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -140,6 +141,30 @@ public class EmployeePayrollService {
 			System.out.println(emp.getName() + " is being added to DB");
 			addEmployeeToPayroll(emp.getName(), emp.getSalary(), emp.getStartDate(), emp.getGender());
 			System.out.println("Employee added: " + emp.getName());
+		}
+	}
+
+	public static  void addEmployeeAndPayrollDataWithThreads(List<EmployeePayrollData> empPayrollListData) {
+		Map<Integer,Boolean> employeeAdditionStatus = new HashMap<Integer,Boolean>();
+		empPayrollListData.forEach(employeePayrollData ->{
+			Runnable task =() ->{
+			employeeAdditionStatus.put(employeePayrollData.hashCode(), false);
+			System.out.println("Employee being added:"+Thread.currentThread().getName());
+			addEmployeeToPayroll(EmployeePayrollData.name,EmployeePayrollData.salary,EmployeePayrollData.startDate,EmployeePayrollData.gender);
+			employeeAdditionStatus.put(employeePayrollData.hashCode(), true);
+			System.out.println("Employee being added:"+Thread.currentThread().getName());
+		};
+		Thread thread =new Thread(task,EmployeePayrollData.name);
+		thread.start();
+	});
+		while(employeeAdditionStatus.containsValue(false)) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(employeePayrollList);
 		}
 	}
 }

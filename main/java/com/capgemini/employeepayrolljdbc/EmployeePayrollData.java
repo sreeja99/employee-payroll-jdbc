@@ -4,11 +4,11 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 public class EmployeePayrollData {
-	public int id;
-	public String name;
-	public double salary;
-	public LocalDate startDate;
-	public String gender;
+	public static int id;
+	public static String name;
+	public static double salary;
+	public static LocalDate startDate;
+	public static String gender;
 	public String companyName;
 	public static int companyId;
 	public String department[];
@@ -79,6 +79,10 @@ public class EmployeePayrollData {
 	}
 
 	
+
+	public EmployeePayrollData(int id, String name, LocalDate startDate, int salary, String gender) {
+		this(id, name, gender, salary, startDate);
+	}
 
 	public String[] getDepartment() {
 		return department;

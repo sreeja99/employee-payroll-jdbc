@@ -120,5 +120,26 @@ public class EmployeePayrollServiceTest {
 		System.out.println("Duration without Thread: " + Duration.between(start, end).toMillis() + " ms");
 		assertEquals(9, employeePayrollService.readPayrollData(IOService.DB_IO).size());
 	}
+	@Test
+	public void cbzjcnklcnkac() throws EmployeePayrollException{
+		EmployeePayrollData[] employeePayrollDataArray = {
+				new EmployeePayrollData(0, "Jeff Bezos",LocalDate.now(),1000000,"M"),
+				new EmployeePayrollData(0, "Bill Gates",LocalDate.now(),2000000,"M"),
+				new EmployeePayrollData(0, "Mark Zukerburg",LocalDate.now(),3000000,"M"),
+				new EmployeePayrollData(0, "Sunder",LocalDate.now(),6000000,"M"),
+				new EmployeePayrollData(0, "Mukesh",LocalDate.now(),1000000,"M"),
+				new EmployeePayrollData(0, "Anil",LocalDate.now(),2000000,"M"),};
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		employeePayrollService.readPayrollData(IOService.DB_IO);
+		Instant start = Instant.now();
+		EmployeePayrollService.addEmployeeAndPayrollData(employeePayrollDataArray);
+		Instant end = Instant.now();
+		System.out.println("Duration without Thread: " + Duration.between(start, end).toMillis() + " ms");
+		Instant threadStart=Instant.now();
+		EmployeePayrollService.addEmployeeAndPayrollDataWithThreads(Arrays.asList(employeePayrollDataArray));
+		Instant threadEnd = Instant.now();
+		System.out.println("Duration with Thread: " + Duration.between(start, end).toMillis() + " ms");
+		assertEquals(13, employeePayrollService.readPayrollData(IOService.DB_IO).size());
+	}
 
 }
