@@ -18,7 +18,7 @@ import com.capgemini.employeepayrolljdbc.EmployeePayrollException.ExceptionType;
 public class EmployeePayrollDBService {
 	private static EmployeePayrollDBService employeePayrollDBService;
 	private PreparedStatement employeePayrollDataStatement;
-
+	private static int connectionCounter = 0;
 	private EmployeePayrollDBService() {
 
 	}
@@ -160,17 +160,40 @@ public class EmployeePayrollDBService {
 		return employeePayrollData;
 	}
 
-	private static Connection getConnection() throws SQLException {
+	private synchronized static Connection getConnection() throws SQLException {
+		connectionCounter++;
 		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?useSSL=false";
 		String userName = "root";
 		String password = "Sreeja6shreya$";
 		Connection connection;
 		System.out.println("Connecting to database: " + jdbcURL);
+		System.out.println("Processing Thread : " + Thread.currentThread().getName() + "Connecting to database : " + jdbcURL);
 		connection = DriverManager.getConnection(jdbcURL, userName, password);
 		System.out.println("Connection successful: " + connection);
+		System.out.println("Processing Thread : " + Thread.currentThread().getName() + " ID : " + connectionCounter
+				+ " Connection is successful! " + connection);
 		return connection;
 	}
-
+	public EmployeePayrollData addEmployeeToPayroll(String name, String gender, double salary, LocalDate startDate) {
+		int employeeId = -1;
+		EmployeePayrollData employeePayrollData = null;
+		String sql = String.format(
+				"INSERT INTO employee_payroll(name,gender,salary,start) VALUES ('%s','%s','%s','%s')", name, gender,
+				salary, Date.valueOf(startDate));
+		try (Connection connection = this.getConnection();) {
+			PreparedStatement preparedstatement = connection.prepareStatement(sql);
+			int rowAffected = preparedstatement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+			if (rowAffected == 1) {
+				ResultSet resultSet = preparedstatement.getGeneratedKeys();
+				if (resultSet.next())
+					employeeId = resultSet.getInt(1);
+			}
+			employeePayrollData = new EmployeePayrollData(employeeId, name, salary, startDate);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return employeePayrollData;
+	}
 	public EmployeePayrollData addEmployeeToPayrollUC8(String name, double salary, LocalDate startDate, String gender) {
 		int employeeId = -1;
 		Connection connection = null;

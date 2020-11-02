@@ -135,15 +135,19 @@ public class EmployeePayrollService {
 		EmployeePayrollDBService.removeEmployeeFromDB(empId);
 	}
 
-	public static void addEmployeeAndPayrollData(EmployeePayrollData[] employeePayrollDataArray)
-			throws EmployeePayrollException {
-		for (EmployeePayrollData emp : employeePayrollDataArray) {
-			System.out.println(emp.getName() + " is being added to DB");
-			addEmployeeToPayroll(emp.getName(), emp.getSalary(), emp.getStartDate(), emp.getGender());
-			System.out.println("Employee added: " + emp.getName());
-		}
+	public void addEmployeeToPayroll(List<EmployeePayrollData> employeePayrollDataList) {
+		employeePayrollDataList.forEach(employeePayrollData -> {
+			System.out.println("Employee being added : " + employeePayrollData.name);
+			this.addEmployeeToPayroll(employeePayrollData.name, employeePayrollData.gender, employeePayrollData.salary,
+					employeePayrollData.startDate);
+			System.out.println("Employee added : " + employeePayrollData.name);
+		});
+		System.out.println("" + this.employeePayrollList);
 	}
 
+	public void addEmployeeToPayroll(String name, String gender, double salary, LocalDate startDate) {
+		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, gender, salary, startDate));
+	}
 	public static  void addEmployeeAndPayrollDataWithThreads(List<EmployeePayrollData> empPayrollListData) {
 		Map<Integer,Boolean> employeeAdditionStatus = new HashMap<Integer,Boolean>();
 		empPayrollListData.forEach(employeePayrollData ->{

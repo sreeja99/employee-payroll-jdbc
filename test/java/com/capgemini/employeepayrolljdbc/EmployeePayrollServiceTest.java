@@ -115,13 +115,13 @@ public class EmployeePayrollServiceTest {
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 		employeePayrollService.readPayrollData(IOService.DB_IO);
 		Instant start = Instant.now();
-		EmployeePayrollService.addEmployeeAndPayrollData(employeePayrollDataArray);
+		employeePayrollService.addEmployeeToPayroll(Arrays.asList(employeePayrollDataArray));
 		Instant end = Instant.now();
 		System.out.println("Duration without Thread: " + Duration.between(start, end).toMillis() + " ms");
 		assertEquals(9, employeePayrollService.readPayrollData(IOService.DB_IO).size());
 	}
 	@Test
-	public void cbzjcnklcnkac() throws EmployeePayrollException{
+	public void given4Employees_WhenAddedUsingThreads_ShouldMatchEmpEntries() throws EmployeePayrollException{
 		EmployeePayrollData[] employeePayrollDataArray = {
 				new EmployeePayrollData(0, "Jeff Bezos",LocalDate.now(),1000000,"M"),
 				new EmployeePayrollData(0, "Bill Gates",LocalDate.now(),2000000,"M"),
@@ -132,7 +132,7 @@ public class EmployeePayrollServiceTest {
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 		employeePayrollService.readPayrollData(IOService.DB_IO);
 		Instant start = Instant.now();
-		EmployeePayrollService.addEmployeeAndPayrollData(employeePayrollDataArray);
+		employeePayrollService.addEmployeeToPayroll(Arrays.asList(employeePayrollDataArray));
 		Instant end = Instant.now();
 		System.out.println("Duration without Thread: " + Duration.between(start, end).toMillis() + " ms");
 		Instant threadStart=Instant.now();
