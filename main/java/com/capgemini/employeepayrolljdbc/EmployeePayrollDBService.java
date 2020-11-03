@@ -194,7 +194,7 @@ public class EmployeePayrollDBService {
 		}
 		return employeePayrollData;
 	}
-	public EmployeePayrollData addEmployeeToPayrollUC8(String name, double salary, LocalDate startDate, String gender) {
+	public EmployeePayrollData addEmployeeToPayrollUC8(String name, String gender, double salary, LocalDate startDate) {
 		int employeeId = -1;
 		Connection connection = null;
 		EmployeePayrollData employeePayrollData = null;
@@ -206,7 +206,7 @@ public class EmployeePayrollDBService {
 		}
 		try (Statement statement = connection.createStatement()) {
 			String sql = String.format(
-					"INSERT INTO employee_payroll(name,gender,salary,start) VALUES ('%s','%s','%s','%s')", name,
+					"INSERT INTO employee_payroll2(name,gender,salary,start) VALUES ('%s','%s','%s','%s')", name,
 					gender, salary, Date.valueOf(startDate));
 			int rowAffected = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 			if (rowAffected == 1) {

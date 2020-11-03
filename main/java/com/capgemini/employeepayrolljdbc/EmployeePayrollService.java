@@ -113,10 +113,6 @@ public class EmployeePayrollService {
 		return employeePayrollMap;
 	}
 
-	public static void addEmployeeToPayroll(String name, double salary, LocalDate startDate, String gender) {
-		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayrollUC8(name, salary, startDate, gender));
-	}
-
 	public static void main(String[] args) {
 		ArrayList<EmployeePayrollData> employeePayrollList = new ArrayList<>();
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService(employeePayrollList);
@@ -144,10 +140,12 @@ public class EmployeePayrollService {
 		});
 		System.out.println("" + this.employeePayrollList);
 	}
-
-	public void addEmployeeToPayroll(String name, String gender, double salary, LocalDate startDate) {
-		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, gender, salary, startDate));
+	
+	private void addEmployeeToPayroll(String name, String gender, double salary, LocalDate startDate) {
+		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayrollUC8(name, gender, salary, startDate));
+		
 	}
+
 	public static  void addEmployeeAndPayrollDataWithThreads(List<EmployeePayrollData> empPayrollListData) {
 		Map<Integer,Boolean> employeeAdditionStatus = new HashMap<Integer,Boolean>();
 		empPayrollListData.forEach(employeePayrollData ->{
@@ -170,5 +168,11 @@ public class EmployeePayrollService {
 			}
 			System.out.println(employeePayrollList);
 		}
+	}
+
+	private static void addEmployeeToPayroll(String name, double salary, LocalDate startDate, String gender) {
+			employeePayrollList.add(employeePayrollDBService.addEmployeeToPayrollUC8(name, gender, salary, startDate));
+		
+		
 	}
 }
