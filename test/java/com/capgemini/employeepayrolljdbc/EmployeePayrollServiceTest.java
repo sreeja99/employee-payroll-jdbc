@@ -41,7 +41,6 @@ public class EmployeePayrollServiceTest {
 		EmployeePayrollData[] arrayOfEmployee = { new EmployeePayrollData(1, "Bill", 100000.0),
 				new EmployeePayrollData(2, "Terisa", 200000.0), new EmployeePayrollData(3, "Charlie", 300000.0) };
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		;
 		employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmployee));
 		long entries = employeePayrollService.countEntries(IOService.FILE_IO);
 		Assert.assertEquals(3, entries);
@@ -138,7 +137,7 @@ public class EmployeePayrollServiceTest {
 		Instant threadStart=Instant.now();
 		EmployeePayrollService.addEmployeeAndPayrollDataWithThreads(Arrays.asList(employeePayrollDataArray));
 		Instant threadEnd = Instant.now();
-		System.out.println("Duration with Thread: " + Duration.between(start, end).toMillis() + " ms");
+		System.out.println("Duration with Thread: " + Duration.between(threadStart, threadEnd).toMillis() + " ms");
 		assertEquals(13, employeePayrollService.readPayrollData(IOService.DB_IO).size());
 	}
 
