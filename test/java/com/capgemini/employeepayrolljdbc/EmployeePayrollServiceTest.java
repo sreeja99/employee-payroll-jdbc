@@ -120,7 +120,9 @@ public class EmployeePayrollServiceTest {
 		assertEquals(9, employeePayrollService.readPayrollData(IOService.DB_IO).size());
 	}
 	@Test
-	public void given4Employees_WhenAddedUsingThreads_ShouldMatchEmpEntries() throws EmployeePayrollException{
+
+	public void given4Employees_WhenAddedUsingThreads_ShouldMatchEmpEntries()() throws EmployeePayrollException{
+
 		EmployeePayrollData[] employeePayrollDataArray = {
 				new EmployeePayrollData(0, "Jeff Bezos",LocalDate.now(),1000000,"M"),
 				new EmployeePayrollData(0, "Bill Gates",LocalDate.now(),2000000,"M"),
