@@ -1,6 +1,5 @@
 package com.capgemini.employeepayrolljdbc;
 
-import java.sql.Date;
 import java.time.LocalDate;
 
 public class EmployeePayrollData {

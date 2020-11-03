@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.capgemini.employeepayrolljdbc.EmployeePayrollException.ExceptionType;
-
 public class EmployeePayrollDBService {
 	private static EmployeePayrollDBService employeePayrollDBService;
 	private PreparedStatement employeePayrollDataStatement;

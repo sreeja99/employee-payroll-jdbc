@@ -1,9 +1,5 @@
 package com.capgemini.employeepayrolljdbc;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -11,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-
-import com.capgemini.employeepayrolljdbc.EmployeePayrollException.ExceptionType;
 
 public class EmployeePayrollService {
 
@@ -37,7 +31,7 @@ public class EmployeePayrollService {
 
 	public EmployeePayrollService(List<EmployeePayrollData> employeePayrollList) {
 		this();
-		this.employeePayrollList = employeePayrollList;
+		this.employeePayrollList = new ArrayList<>(employeePayrollList);
 	}
 
 	private void readEmployeePayrollData(Scanner consoleInputReader) {
@@ -67,7 +61,7 @@ public class EmployeePayrollService {
 	public long countEntries(IOService ioService) {
 		if (ioService.equals(IOService.FILE_IO))
 			return new EmployeePayrollFileIOService().countEntries();
-		return 0;
+		return employeePayrollList.size();
 	}
 
 	public  List<EmployeePayrollData> readPayrollData(IOService ioService) {
