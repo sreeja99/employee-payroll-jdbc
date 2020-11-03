@@ -28,7 +28,6 @@ public class EmployeePayrollServiceTest {
 		EmployeePayrollData[] arrayOfEmployee = { new EmployeePayrollData(1, "bill", 100000.0),
 				new EmployeePayrollData(2, "Sreeja", 200000.0), new EmployeePayrollData(3, "Terisa", 300000.0) };
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		;
 		employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmployee));
 		employeePayrollService.writeEmployeePayrollData(IOService.FILE_IO);
 	}
