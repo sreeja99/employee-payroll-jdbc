@@ -38,7 +38,6 @@ public class EmployeePayrollServiceTest {
 		EmployeePayrollData[] arrayOfEmployee = { new EmployeePayrollData(1, "Bill", 100000.0),
 				new EmployeePayrollData(2, "Terisa", 200000.0), new EmployeePayrollData(3, "Charlie", 300000.0) };
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		;
 		employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmployee));
 		long entries = employeePayrollService.countEntries(IOService.FILE_IO);
 		Assert.assertEquals(3, entries);
