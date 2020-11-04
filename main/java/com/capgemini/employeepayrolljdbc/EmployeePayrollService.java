@@ -87,7 +87,7 @@ public class EmployeePayrollService {
 		return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
 	}
 
-	private EmployeePayrollData getEmployeePayrollData(String name) {
+	EmployeePayrollData getEmployeePayrollData(String name) {
 		EmployeePayrollData employeePayrollData;
 		employeePayrollData = this.employeePayrollList.stream()
 				.filter(employeePayrollDataItem -> employeePayrollDataItem.name.equals(name)).findFirst().orElse(null);
@@ -174,6 +174,18 @@ public class EmployeePayrollService {
 		if (ioService.equals(IOService.DB_IO))
 			this.addEmployeeToPayroll(EmployeePayrollData.name, EmployeePayrollData.salary, EmployeePayrollData.startDate, EmployeePayrollData.gender);
 		else employeePayrollList.add(empPayrollData);
+		
+	}
+
+	public void updateEmployeeSalary(String name, double salary, IOService ioService) {
+		if (ioService.equals(IOService.DB_IO)) {
+			int result = employeePayrollDBServiceNormalised.updateEmployeeData(name, salary);
+			if (result == 0)
+				return;
+		}
+		EmployeePayrollData employeePayrollData = this.getEmployeePayrollData(name);
+		if (employeePayrollData != null)
+			employeePayrollData.salary = salary;
 		
 	}
 }
