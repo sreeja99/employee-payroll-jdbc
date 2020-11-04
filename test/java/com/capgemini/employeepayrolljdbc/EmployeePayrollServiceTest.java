@@ -154,16 +154,6 @@ public class EmployeePayrollServiceTest {
 		RestAssured.baseURI = "https://localhost";
 		RestAssured.port = 3000;
 	}
-
-	@Test
-	public void givenEmployeeDataInJsonServer_WhenRetrived_ShouldMatchCount() {
-		EmployeePayrollData[] arrayOfEmps = getEmployeeList();
-		EmployeePayrollService employeePayrollService;
-		employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmps));
-		long entries = employeePayrollService.countEntries(IOService.REST_IO);
-		Assert.assertEquals(2, entries);
-	}
-
 	private EmployeePayrollData[] getEmployeeList() {
 		Response response = RestAssured.get("/employees_payroll");
 		System.out.println("Employee Payroll entries in JSONserver" + response.asString());
@@ -213,6 +203,14 @@ public class EmployeePayrollServiceTest {
 		int statusCode = response.getStatusCode();
 		Assert.assertEquals(200, statusCode);
 		
+	}
+	@Test
+	public void givenEmployeeDataInJsonServer_WhenRetrived_ShouldMatchCount() {
+		EmployeePayrollData[] arrayOfEmps = getEmployeeList();
+		EmployeePayrollService employeePayrollService;
+		employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmps));
+		long entries = employeePayrollService.countEntries(IOService.REST_IO);
+		Assert.assertEquals(2, entries);
 	}
 	
 }
