@@ -58,7 +58,7 @@ public class EmployeePayrollService {
 			new EmployeePayrollFileIOService().printData();
 	}
 
-	public long countEntries(IOService ioService) {
+	public static long countEntries(IOService ioService) {
 		if (ioService.equals(IOService.FILE_IO))
 			return new EmployeePayrollFileIOService().countEntries();
 		return employeePayrollList.size();
@@ -167,6 +167,13 @@ public class EmployeePayrollService {
 	private static void addEmployeeToPayroll(String name, double salary, LocalDate startDate, String gender) {
 			employeePayrollList.add(employeePayrollDBService.addEmployeeToPayrollUC8(name, gender, salary, startDate));
 		
+		
+	}
+
+	public void addEmployeeToPayroll(EmployeePayrollData empPayrollData, IOService ioService) {
+		if (ioService.equals(IOService.DB_IO))
+			this.addEmployeeToPayroll(EmployeePayrollData.name, EmployeePayrollData.salary, EmployeePayrollData.startDate, EmployeePayrollData.gender);
+		else employeePayrollList.add(empPayrollData);
 		
 	}
 }
